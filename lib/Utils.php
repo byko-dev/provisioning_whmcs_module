@@ -14,4 +14,14 @@ class Utils
         if(!file_exists($filename))
             throw new \Exception("File $filename doesnt exists");
     }
+
+    public static function isIdUnique(array $array, $newId) {
+        foreach ($array as $subarray) {
+            if ($subarray['id'] == $newId) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

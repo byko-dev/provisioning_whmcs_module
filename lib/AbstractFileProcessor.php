@@ -5,7 +5,7 @@ namespace WHMCS\Module\Server\SimpleWHMCSModule;
 use WHMCS\Module\Server\SimpleWHMCSModule\Utils;
 
 abstract class AbstractFileProcessor {
-    protected function read($filename) : array{
+    protected function read(string $filename) : array{
         try{
             Utils::isFileExisted($filename);
 
@@ -20,7 +20,7 @@ abstract class AbstractFileProcessor {
         }
     }
 
-    protected function write($filename, $data) : void {
+    protected function write(string $filename, array $data) : void {
         file_put_contents($filename, json_encode($data));
     }
 
