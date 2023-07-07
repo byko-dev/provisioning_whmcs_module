@@ -1,1 +1,2 @@
-[]
+{"id":"2","firstname":"James","lastname":"Macintosh","status":"Active"}
+{"id":"6","firstname":"Lavern","lastname":"Beahan","status":"Suspended"}

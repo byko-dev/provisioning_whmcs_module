@@ -4,27 +4,45 @@ namespace WHMCS\Module\Server\SimpleWHMCSModule;
 
 use WHMCS\Module\Server\SimpleWHMCSModule\Utils;
 
-abstract class AbstractFileProcessor {
-    protected function read(string $filename) : array{
-        try{
-            Utils::isFileExisted($filename);
+abstract class AbstractFileProcessor extends AbstractFileStream {
 
-            $data = json_decode(file_get_contents($filename), true);
-
-            if($data === null)
-                throw new \Exception();
-
-            return $data;
-        }catch (\Exception $ex){
-            return [];
-        }
+    protected function write(string $filename, string $record) : void{
+        $this->stream_read($filename, function($reader) use ($record) {
+            fwrite($reader, $record);
+        }, "a");
     }
 
-    protected function write(string $filename, array $data) : void {
-        file_put_contents($filename, json_encode($data));
+    protected function removeById(string $filename, string $id) : void{
+        $this->stream_update($filename, $id, function () {
+            /* write a blank line to delete the record */
+            return "";
+        });
     }
 
-    public abstract function appendRecord(string $id, string $name, string $lastname) : void;
+    protected function updateStatusById(string $filename, string $id, string $status) : void{
+        $this->stream_update($filename, $id, function ($line) use ($status){
+            $data = json_decode($line, true);
+            $data['status'] = $status;
+            return json_encode($data) . "\n";
+        });
+    }
+
+    protected function isRecordUnique(string $filename, string $id) : bool{
+        $unique = true;
+        $this->stream_read($filename, function ($reader) use ($id, &$unique){
+            while (($line = fgets($reader)) !== false) {
+                if (json_decode($line, true)['id'] == $id) {
+                    $unique = false;
+                }
+            }
+        });
+        return $unique;
+    }
+
+    /* functions to implementation */
+    public abstract function appendRecord(string $id, string $name, string $lastname, string $status) : void;
 
     public abstract function removeRecord(string $id) : void;
+
+    public abstract function updateRecord(string $id, string $status) : void;
 }
