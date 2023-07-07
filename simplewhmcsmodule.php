@@ -24,7 +24,7 @@ function simplewhmcsmodule_CreateAccount(array $params) : string {
         $clientData = $params["clientsdetails"];
 
         $fileProcessor = new FileProcessor();
-        $fileProcessor->appendRecord($clientData["id"], $clientData["firstname"], $clientData["lastname"]);
+        $fileProcessor->appendRecord($clientData["id"], $clientData["firstname"], $clientData["lastname"], $clientData["status"]);
 
     }catch (Exception $ex){
         logModuleCall(
@@ -58,5 +58,39 @@ function simplewhmcsmodule_TerminateAccount(array $params) : string {
     return "success";
 }
 
+function simplewhmcsmodule_SuspendAccount(array $params) : string{
+    try{
+        $fileProcessor = new FileProcessor();
+        $fileProcessor->updateRecord($params["clientsdetails"]["id"], "Suspended");
+    }catch (Exception $ex){
+        logModuleCall(
+            'simplewhmcsmodule',
+            __FUNCTION__,
+            $params,
+            $ex->getMessage(),
+            $ex->getTraceAsString()
+        );
+        return $ex->getMessage();
+    }
+    return "success";
+}
+
+function simplewhmcsmodule_UnsuspendAccount(array $params) : string {
+    try{
+        $clientData = $params["clientsdetails"];
+        $fileProcessor = new FileProcessor();
+        $fileProcessor->updateRecord($clientData["id"], $clientData["status"]);
+    }catch (Exception $ex){
+        logModuleCall(
+            'simplewhmcsmodule',
+            __FUNCTION__,
+            $params,
+            $ex->getMessage(),
+            $ex->getTraceAsString()
+        );
+        return $ex->getMessage();
+    }
+    return "success";
+}
 
 
