@@ -2,25 +2,25 @@
 
 namespace WHMCS\Module\Server\SimpleWHMCSModule;
 
-use WHMCS\Module\Server\SimpleWHMCSModule\Utils;
+use WHMCS\Module\Server\SimpleWHMCSModule\FileStream;
 
-abstract class AbstractFileProcessor extends AbstractFileStream {
+abstract class AbstractFileProcessor {
 
     protected function write(string $filename, string $record) : void{
-        $this->stream_read($filename, function($reader) use ($record) {
+        FileStream::stream_read($filename, function($reader) use ($record) {
             fwrite($reader, $record);
         }, "a");
     }
 
     protected function removeById(string $filename, string $id) : void{
-        $this->stream_update($filename, $id, function () {
+        FileStream::stream_update($filename, $id, function () {
             /* write a blank line to delete the record */
             return "";
         });
     }
 
     protected function updateStatusById(string $filename, string $id, string $status) : void{
-        $this->stream_update($filename, $id, function ($line) use ($status){
+        FileStream::stream_update($filename, $id, function ($line) use ($status){
             $data = json_decode($line, true);
             $data['status'] = $status;
             return json_encode($data) . "\n";
@@ -29,7 +29,7 @@ abstract class AbstractFileProcessor extends AbstractFileStream {
 
     protected function isRecordUnique(string $filename, string $id) : bool{
         $unique = true;
-        $this->stream_read($filename, function ($reader) use ($id, &$unique){
+        FileStream::stream_read($filename, function ($reader) use ($id, &$unique){
             while (($line = fgets($reader)) !== false) {
                 if (json_decode($line, true)['id'] == $id) {
                     $unique = false;
