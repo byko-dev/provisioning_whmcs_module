@@ -1,10 +1,9 @@
 <?php
 
 namespace WHMCS\Module\Server\SimpleWHMCSModule;
+class FileStream {
 
-abstract class AbstractFileStream {
-
-    protected function stream_read(string $filename, $callback, string $mode = "r+") : void{
+    public static function stream_read(string $filename, $callback, string $mode = "r+") : void{
         try {
             $stream_reader = fopen($filename, $mode);
             if (!$stream_reader)
@@ -19,9 +18,9 @@ abstract class AbstractFileStream {
         }
     }
 
-    protected function stream_update(string $filename, string $id, $callback) : void{
+    public static function stream_update(string $filename, string $id, $callback) : void{
 
-        $this->stream_read($filename, function ($reader) use ($id, $callback){
+        self::stream_read($filename, function ($reader) use ($id, $callback){
             $content = "";
             while (($line = fgets($reader)) !== false) {
                 if (json_decode($line, true)['id'] == $id) {

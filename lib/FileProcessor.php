@@ -2,7 +2,6 @@
 
 namespace WHMCS\Module\Server\SimpleWHMCSModule;
 
-use WHMCS\Module\Server\SimpleWHMCSModule\Utils;
 class FileProcessor extends AbstractFileProcessor {
 
     private const BASE_FILE = (__DIR__ . DIRECTORY_SEPARATOR . "base.txt");
